@@ -12,13 +12,12 @@ import java.util.concurrent.TimeUnit;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
 
 @BenchmarkMode(Mode.AverageTime)
@@ -29,7 +28,7 @@ import org.openjdk.jmh.infra.Blackhole;
 //@Warmup(iterations = 5)
 public class BenchmarkCollection {
 
-	private static long N = 1_000_000;
+	private static int N = 1_000_000;
 	private static final String STRING_TO_FIND = String.valueOf(N - N / 4);
 
 	private List<String> linkedList;
@@ -41,8 +40,8 @@ public class BenchmarkCollection {
 	@Setup
 	public void setUp() {
 		linkedList = new LinkedList<>();
-		arrayList = new ArrayList<>();
-		hashSet = new HashSet<>();
+		arrayList = new ArrayList<>(N);
+		hashSet = new HashSet<>(N);
 		linkedHashSet = new LinkedHashSet<>();
 		treeSet = new TreeSet<>();
 		for (int i = 0; i < N; i++) {
