@@ -1,7 +1,6 @@
 package listiteration;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -12,109 +11,127 @@ import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Warmup;
 
 @BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-@State(Scope.Thread)
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@State(Scope.Benchmark)
 @Fork(value = 2, jvmArgs = { "-Xms2G", "-Xmx2G" })
 @Measurement(iterations = 200)
 @Warmup(iterations = 5)
 public class BenchmarkListCollection {
 
-	private static final int N = 1_000_000;
+	@Param({ "50000", "100000", "1000000", "2000000" })
+	private int size;
 
-	@Setup(Level.Trial)
+	private List<String> testData = new ArrayList<>();
+
+	@Setup(Level.Iteration)
 	public void doSetup() {
-		for (int i = 0; i < N; i++) {
-			testData.add(Integer.valueOf(i));
+		populateList(size);
+	}
+
+	private List<String> populateList(int size) {
+		List<String> list = new ArrayList<>();
+		for (int ctr = 0; ctr < size; ++ctr) {
+			list.add("zzz");
 		}
+		return list;
 	}
-
-	@TearDown(Level.Trial)
-	public void doTearDown() {
-		testData = new ArrayList<>(N);
-	}
-
-	private static List<Integer> testData = new ArrayList<>(N);
 
 	@Benchmark
-	public List<Integer> iteratorWhile() {
+	public long iteratorWhile() {
 
-		List<Integer> result = new ArrayList<>(testData.size());
+		long count = 0;
 
-		Iterator<Integer> it = testData.iterator();
+		var it = testData.iterator();
 		while (it.hasNext()) {
-			Integer i = it.next();
-			result.add((int) Math.sqrt(i));
+			String i = it.next();
+			if (i.length() == 3)
+				++count;
 		}
 
-		return result;
+		return count;
 	}
 
 	@Benchmark
-	public List<Integer> forLoop() {
+	public long forLoop() {
 
-		List<Integer> result = new ArrayList<>(testData.size());
+		long count = 0;
 
-		for (int j = 0; j < testData.size(); j++) {
+		for (int i = 0; i < size; i++) {
 
-			result.add((int) Math.sqrt(testData.get(j)));
-
-		}
-
-		return result;
-	}
-
-	@Benchmark
-	public List<Integer> forEach() {
-
-		List<Integer> result = new ArrayList<>(testData.size());
-
-		for (Integer item : testData) {
-
-			result.add((int) Math.sqrt(item));
+			if (testData.get(i).length() == 3)
+				++count;
 
 		}
 
-		return result;
+		return count;
+	}
+
+	@Benchmark
+	public long forEach() {
+
+		long count = 0;
+
+		for (String item : testData) {
+
+			if (item.length() == 3)
+				++count;
+
+		}
+
+		return count;
 
 	}
 
 	@Benchmark
-	public List<Integer> forEachLambda() {
+	public long forEachLambda() {
 
-		List<Integer> result = new ArrayList<>(testData.size());
+		IntHolder intHolder = new IntHolder();
 
-		testData.forEach(i -> result.add((int) Math.sqrt(i)));
+		testData.forEach(i -> {
+			if (i.length() == 3)
+				++intHolder.value;
+		});
 
-		return result;
-
-	}
-
-	@Benchmark
-	public List<Integer> streamSingleThread() {
-
-		List<Integer> result = new ArrayList<>(testData.size());
-
-		testData.stream().forEach(i -> result.add((int) Math.sqrt(i)));
-
-		return result;
+		return intHolder.value;
 
 	}
 
 	@Benchmark
-	public List<Integer> streamMultiThread() {
+	public long streamSingleThread() {
 
-		List<Integer> result = new ArrayList<>(testData.size());
+		IntHolder intHolder = new IntHolder();
 
-		testData.stream().parallel().forEach(i -> result.add((int) Math.sqrt(i)));
+		testData.stream().forEach(i -> {
+			if (i.length() == 3)
+				++intHolder.value;
+		});
 
-		return result;
+		return intHolder.value;
 
+	}
+
+	@Benchmark
+	public long streamMultiThread() {
+
+		IntHolder intHolder = new IntHolder();
+
+		testData.stream().parallel().forEach(i -> {
+			if (i.length() == 3)
+				++intHolder.value;
+		});
+
+		return intHolder.value;
+
+	}
+
+	public static class IntHolder {
+		public long value = 0;
 	}
 }
