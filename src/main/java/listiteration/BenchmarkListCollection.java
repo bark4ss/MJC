@@ -1,13 +1,13 @@
 package listiteration;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
@@ -21,16 +21,16 @@ import org.openjdk.jmh.annotations.Warmup;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
 @Fork(value = 2, jvmArgs = { "-Xms2G", "-Xmx2G" })
-@Measurement(iterations = 200)
+@Measurement(iterations = 100)
 @Warmup(iterations = 5)
 public class BenchmarkListCollection {
 
-	@Param({ "50000", "100000", "1000000", "2000000" })
+	@Param({ "500000", "1000000", "2000000" })
 	private int size;
 
 	private List<String> testData = new ArrayList<>();
 
-	@Setup(Level.Iteration)
+	@Setup
 	public void doSetup() {
 		populateList(size);
 	}
@@ -48,11 +48,13 @@ public class BenchmarkListCollection {
 
 		long count = 0;
 
-		var it = testData.iterator();
+		Iterator<String> it = testData.iterator();
 		while (it.hasNext()) {
 			String i = it.next();
-			if (i.length() == 3)
+			if (i.length() == 3) {
 				++count;
+			}
+
 		}
 
 		return count;
@@ -63,10 +65,11 @@ public class BenchmarkListCollection {
 
 		long count = 0;
 
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < testData.size(); i++) {
 
-			if (testData.get(i).length() == 3)
+			if (testData.get(i).length() == 3) {
 				++count;
+			}
 
 		}
 
@@ -80,8 +83,9 @@ public class BenchmarkListCollection {
 
 		for (String item : testData) {
 
-			if (item.length() == 3)
+			if (item.length() == 3) {
 				++count;
+			}
 
 		}
 
