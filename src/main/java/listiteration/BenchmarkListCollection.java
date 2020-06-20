@@ -21,7 +21,7 @@ import org.openjdk.jmh.annotations.Warmup;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
 @Fork(value = 2, jvmArgs = { "-Xms2G", "-Xmx2G" })
-@Measurement(iterations = 100)
+@Measurement(iterations = 10)
 @Warmup(iterations = 5)
 public class BenchmarkListCollection {
 
@@ -109,29 +109,13 @@ public class BenchmarkListCollection {
 
 	@Benchmark
 	public long streamSingleThread() {
-
-		IntHolder intHolder = new IntHolder();
-
-		testData.stream().forEach(i -> {
-			if (i.length() == 3)
-				++intHolder.value;
-		});
-
-		return intHolder.value;
-
+		return testData.stream().filter(i->i.length()==3).count();
 	}
 
 	@Benchmark
 	public long streamMultiThread() {
 
-		IntHolder intHolder = new IntHolder();
-
-		testData.stream().parallel().forEach(i -> {
-			if (i.length() == 3)
-				++intHolder.value;
-		});
-
-		return intHolder.value;
+		return testData.stream().parallel().filter(i->i.length()==3).count();
 
 	}
 
