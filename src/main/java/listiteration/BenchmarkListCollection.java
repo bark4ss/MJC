@@ -21,7 +21,7 @@ import org.openjdk.jmh.annotations.Warmup;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
 @Fork(value = 2, jvmArgs = { "-Xms2G", "-Xmx2G" })
-@Measurement(iterations = 10)
+@Measurement(iterations = 100)
 @Warmup(iterations = 5)
 public class BenchmarkListCollection {
 
