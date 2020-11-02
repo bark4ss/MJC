@@ -17,6 +17,16 @@
 			<artifactId>jmh-generator-annprocess</artifactId>
 			<version>${openjdk.jmh.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.11</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>30.0-jre</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -36,8 +46,8 @@
 	</build>
 
 	<properties>
-		<maven.compiler.source>14</maven.compiler.source>
-		<maven.compiler.target>14</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 		<maven.version>3.8.0</maven.version>
 		<openjdk.jmh.version>1.19</openjdk.jmh.version>
 		<maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
