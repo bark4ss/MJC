@@ -1,4 +1,4 @@
-package stringConcatination;
+package stringConcatenation;
 
 import java.util.ArrayList;
 import java.util.List;

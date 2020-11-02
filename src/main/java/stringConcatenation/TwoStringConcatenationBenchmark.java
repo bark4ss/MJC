@@ -1,4 +1,4 @@
-package stringConcatination;
+package stringConcatenation;
 
 import java.util.Arrays;
 import java.util.StringJoiner;
